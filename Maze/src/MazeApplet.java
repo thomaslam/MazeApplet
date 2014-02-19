@@ -25,7 +25,7 @@ public class MazeApplet extends Applet implements KeyListener
     private int height;
     private int width;
     private int num;
-    private JoinRoom ds;
+    private RoomSet set;
 
     private int x_cord; 
     private int y_cord;
@@ -154,7 +154,7 @@ public class MazeApplet extends Applet implements KeyListener
     private void generateRandomMaze() 
     {
         generateInitialRooms();
-        ds = new JoinRoom(width * height);
+        set = new RoomSet(width * height);
         rand = new Random(); 
         num = width * height;
 
@@ -165,10 +165,10 @@ public class MazeApplet extends Applet implements KeyListener
         	int roomA = temp.currentRoom.x + temp.currentRoom.y * width;
             int roomB = temp.nextRoom.x + temp.nextRoom.y * width;
 
-            if (ds.find(roomA) != ds.find(roomB)) 
+            if (set.find(roomA) != set.find(roomB)) 
             {
                 walls.remove(randomWall);
-                ds.unionRooms(ds.find(roomA), ds.find(roomB));
+                set.unionRooms(set.find(roomA), set.find(roomB));
                 temp.isGone = true;
                 temp.currentRoom.adj.add(temp.nextRoom);
                 temp.nextRoom.adj.add(temp.currentRoom);

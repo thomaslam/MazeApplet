@@ -1,7 +1,7 @@
-public class JoinRoom
+public class RoomSet
 {
    private int[] set;
-   public JoinRoom(int e)
+   public RoomSet(int e)
    {
       set = new int[e];
       for(int i = 0; i < set.length; i++)
