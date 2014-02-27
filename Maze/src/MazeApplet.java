@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -220,7 +221,28 @@ public class MazeApplet extends Applet implements KeyListener
         rooms[height - 1][width - 1].roomName = (height * width);
     }
 	
-    private void AStarSolve()
+    private void dfsSolve()
+    {
+    	Stack s = new Stack();
+    	
+    	s.push(rooms[0][0]);
+    	rooms[0][0].visited = true;
+    	while(!s.isEmpty())
+    	{
+    		Room r = (Room) s.peek();
+    		if (getUnvisitedNeighbors(r.x, r.y).size() != 0)
+    		{
+    			Room child = getUnvisitedNeighbors(r.x, r.y).get(0);
+    			child.visited = true;
+    			child.parent = r;
+    			s.push(child);
+    		}	
+    		else
+    			s.pop();
+    	}
+    }
+    
+    /**private void AStarSolve()
     {
     	ArrayList<Room>	openList = new ArrayList<Room>();
     	ArrayList<Room>	closedList = new ArrayList<Room>();
@@ -243,7 +265,7 @@ public class MazeApplet extends Applet implements KeyListener
     		int x_value = current.x;
     		int y_value = current.y;
     		Room t = rooms[y_value][x_value];
-    		ArrayList<Room> neighbors = getNeighbors(x_value, y_value);
+    		ArrayList<Room> neighbors = getUnvisitedNeighbors(x_value, y_value);
     		openList.remove(minIndex);
     		
     		for (int j = 0; j < neighbors.size(); j++)
@@ -276,7 +298,7 @@ public class MazeApplet extends Applet implements KeyListener
     	}
     	
     	trace(rooms[height-1][width-1]);
-    }
+    }*/
     
     private void trace(Room r)
     {
@@ -286,28 +308,18 @@ public class MazeApplet extends Applet implements KeyListener
     		rooms[0][0].isFoundByAI = true;
     	else
     	{
-    		rooms[y][x].isFoundByAI = true;
+    		r.isFoundByAI = true;
     		trace(r.parent);
     	}
     }
     
-    public Room contains(ArrayList<Room> list, Room r)
-    {
-    	for (Room a : list)
-    	{
-    		if (a.x == r.x && a.y == r.y)
-    			return a;
-    	}
-    	return null;
-    }
-    
-    public ArrayList<Room> getNeighbors(int x, int y)
+    public ArrayList<Room> getUnvisitedNeighbors(int x, int y)
     {
     	ArrayList<Room> list = new ArrayList<Room>();
     	
     	if (y > 0)
     	{
-    		if (rooms[y][x].north.isGone)
+    		if (rooms[y][x].north.isGone && rooms[y-1][x].visited == false)
     		{
     			list.add(rooms[y-1][x]);
     			rooms[y-1][x].parent = rooms[y][x];
@@ -316,7 +328,7 @@ public class MazeApplet extends Applet implements KeyListener
     	
     	if (y < height - 1)
     	{
-    		if (rooms[y+1][x].north.isGone)
+    		if (rooms[y+1][x].north.isGone && rooms[y+1][x].visited == false)
     		{
     			list.add(rooms[y+1][x]);
     			rooms[y+1][x].parent = rooms[y][x];
@@ -325,7 +337,7 @@ public class MazeApplet extends Applet implements KeyListener
     	
     	if (x > 0)
     	{
-    		if (rooms[y][x].west.isGone)
+    		if (rooms[y][x].west.isGone && rooms[y][x-1].visited == false)
     		{
     			list.add(rooms[y][x-1]);
     			rooms[y][x-1].parent = rooms[y][x];
@@ -334,7 +346,7 @@ public class MazeApplet extends Applet implements KeyListener
     	
     	if (x < width - 1)
     	{
-    		if (rooms[y][x+1].west.isGone)
+    		if (rooms[y][x+1].west.isGone && rooms[y][x+1].visited == false)
     		{
     			list.add(rooms[y][x+1]);
     			rooms[y][x+1].parent = rooms[y][x];
@@ -352,7 +364,8 @@ public class MazeApplet extends Applet implements KeyListener
         int x = x_cord;
         int y = y_cord;
         
-        //AStarSolve(); not complete yet
+        dfsSolve();
+        trace(rooms[height-1][width-1]);
         g2.setStroke(new BasicStroke(2));
         
         for (int i = 0; i <= height - 1; i++) 

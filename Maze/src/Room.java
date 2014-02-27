@@ -8,6 +8,7 @@ public class Room
    public Room parent; 
    public boolean isTraversed = false;
    public boolean isFoundByAI = false;
+   public boolean visited = false;
    
    // For A* Search algorithm
    public int f_value;
